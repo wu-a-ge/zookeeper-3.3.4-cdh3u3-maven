@@ -1,0 +1,127 @@
+From de57447d00357fd94ce3900bbeace9bc28fd630b Mon Sep 17 00:00:00 2001
+From: Patrick Hunt <phunt@cloudera.com>
+Date: Mon, 2 May 2011 10:28:53 -0700
+Subject: [PATCH 15/22] ZOOKEEPER-1030. higher default for maxClientCnxns
+
+The default for maxClientCnxns is 10, which is too low for many
+applications. For example, HBase users often run MR jobs where each
+task needs to use ZooKeeper to talk to HBase. This means that each
+slot on the tasktracker will have at least one ZK connection. With
+today's beefy machines, that's easily 20+ connections per node. I
+would suggest bumping the default to 60, which will still protect
+against runaway nodes (eg a leak in a tight loop) but won't impact MR
+jobs that need to talk to ZK.
+
+Reason: Improvement
+Author: Todd Lipcon
+Ref: CDH-2877
+---
+ docs/zookeeperAdmin.html                           |    2 +-
+ docs/zookeeperAdmin.pdf                            |  Bin 67806 -> 67807 bytes
+ .../documentation/content/xdocs/zookeeperAdmin.xml |    2 +-
+ .../org/apache/zookeeper/server/NIOServerCnxn.java |    2 +-
+ .../zookeeper/server/quorum/QuorumPeerConfig.java  |    2 +-
+ 5 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/docs/zookeeperAdmin.html b/docs/zookeeperAdmin.html
+index 34a5625..e6f0e9c 100644
+--- a/docs/zookeeperAdmin.html
++++ b/docs/zookeeperAdmin.html
+@@ -1101,7 +1101,7 @@ server.3=zoo3:2888:3888</pre>
+               level) that a single client, identified by IP address, may make
+               to a single member of the ZooKeeper ensemble. This is used to 
+               prevent certain classes of DoS attacks, including file 
+-              descriptor exhaustion. The default is 10. Setting this to 0 
++              descriptor exhaustion. The default is 60. Setting this to 0 
+               entirely removes the limit on concurrent connections.</p>
+ </dd>
+ 
+diff --git a/docs/zookeeperAdmin.pdf b/docs/zookeeperAdmin.pdf
+index 024d295cae63e6114ee1bb86c9e8b154ed9160e3..fcc4a77e1761c74fbe9f3c591750410e5613ec6c 100644
+GIT binary patch
+delta 3277
+zcmai0&ud*(5awYJeKd4Yx{y*xg&IT(XMUbDQ6r|YU_pZ*?o^6cT@)8d#V!gL*8#D;
+zR2MEqcP=EZL@T&(E4We@`X6*5BEBT3^U}N|cP8LlTpn}h+?o02oA1nTx8{DoHTU7|
+zhp_+@grZ-5^2>>Nyinj}C`$-SMYrCc??*#Zf9_-%TDD$0d3NcEzy7&<W#h*?>t}Y}
+zUA*_H-Fe&YUj6EukJfIU{r2A6=Fb}!ZoKu~=ey7Rapt8z`_G>LVbr#+U7mdLI4qRu
+zZ{eMV@!lUTAd+lo*njZ%8>d@(BL(^gCoeqEO6gyjJUMFp?aAUu`>!YOoyOoTh}!x~
+z+nXckf7)IgS-<Vi+CRFpIFkOdKdE2eS@Y-jJDVf!U)<dsVgKvyV;z_9DTk|Buz?kg
+z<shKc;3sSvOGHx8;OA%S{ertge2^psMquT5m|986h#u#M5hs*J16${<QSka=5NSfu
+zW>|AzYq52xP~%yT0fWFE7nPdVzekP(mY@nmSWz`2qgIli3B+UwP>=DW{T9z31SVkW
+z;onmo$L{+Zi5(<r30wlPh!1h0*gz))rSEasAC4o8aL1C8VdO|LQo<Nmz3zmC62~U6
+zR2twjWdteLl%aYLL$gRLM?Wtv*+^SUN!Nne2AUW_6)ih5MdnZyjc6$_MjO>yA~Fgx
+zvvr4zsEt$as<jx{54Qn?Qv@48O1hyW1RL2fhU4#oQDYGDd5l4P&N5k>*6bIielNiW
+zaY(6|)GqXxwODjyr$VfbjT2c}bH(ga9}{GC0pE|?&F%|UmDnfNnz+DfLrwGQxR!(<
+zS1ggNT+>86Qe4E7+^|*XVf$1^v4d<aH9=h5X7$X<5ue+LncGsc{0>R#Ag*Eezjs6(
+zL_lH?MM`&r+iIKvKU;^iE3Q9TF+_MM+k5u~aspiZmy?mC7$Pb;a6QJ>T0~mJtV@So
+z=wfxwx^$t5V#^6?QVdZ_BJMfQP(4%!zj0@haiAEYHBnZyX{4QEO=w9iX&^o4z&FQV
+zs!MwqQmMXXBpY!YT&bMNTAdB)tZGKfphR_$+As!Dv@}0b4dXB?m2^c(^YIJGs9(S{
+z#W+w0X`m@E`5G7w`@-Wps7u0;P1J1`lbP;2aXghMN?KQ>x!!~ix}!z7{7y(x<@aye
+zpnU1eQ(^^D(gv<6)A>7EiDBA!#N{xdV4V43E;XSLF&EurtA|OS*k9(w*FOAs<)P8j
+zuM619sxe+fqt*)2YSq=1f)}4H;)_#TUU=$%U0xk8FON5_Us=C?WBtvmV<nL?K7anX
+IwM*mw01QT;Y5)KL
+
+delta 3236
+zcmai0KZu-F5a+|g=wb+Fxl&ota3~7z&A<2FX%6;|ji|^e1OfpS|8}uRBHDe}*jy3g
+zD-I$lVj);q$RUVUB3K9_Vj(taqg5anEV8+aI=gqd-EZc=EtX|=zHerJ^PAtyZx<JS
+zy}0oH2Y1IP0FkJC_Tex09FC7gISH^FX_?B_yN7GjHPr`>gsx@l#UuAEKk~`f?|py#
+z)OTmD{(Sk13xA&c=#Lwhe!PBq<*&E?{<8n*D?fbx`{i4guK#=O{^zgNkDvOsNn2;0
+z9)J397=+1Z@aCX5{UISTIUAH%FWh)_F}Z&@gnDTF>>a6;dTRW5lWH9=HC(?Mzr7fZ
+zHv>qjPu|>ULjCFHQj_bpeoK9Dd#R!NjDABsx4o|4-)wI*Sl4$p>d~E}_3F;zb6CvF
+zAcmZcEtVj*Ac(+X{Fq9;a;x7;Wb==DCtD;SyGYtDLHjIb1+ojL#y-dorqHx=xC3Xj
+zcu9=emCc#K1}Tty;F4V-64U&%Ym;0xNVI`LFuB0O(c%aqb@)%eRoGoh9Bp`v>hJx~
+zb`c|?r66La1N?Z}zj++haTnY<Y%y}N_#g$e4Md4(388*&9@H<)C!_I0Kmu}E3xW+S
+zih@H%kZcc#6I!%TD7geh+GvBIB(jcLoU@_i?2=9ayiFlAt-}Om*RP$)2POjV$TAPt
+zF6#)a4O0ph8J$pP!<4Dhx(WVDSVviXI6DY)jIO#2>=4XYIzcpsL=jh9W^8Q`oioqY
+zEXn)%p~sx#{E$x2!d#q&k%Y46*Y2w~=``Ews8ENklNXZsidE1YS|seIiA1>DCdHp5
+z?U7-|1(M<<jZ$zBQi5Q~O6h=!D9TntLMkbS));lqpzS9WFCe<RTy+fO=3Q;Bb-F_K
+zwW7VfJXuHE&M|XjYZJ}SCaAV#tJ7zbB_U6ObPH|+GdU3#AO}C|$0x&1KbVDm;B<g3
+z=P;P+->mP<#f=WD?Ahv+gKoXCK=uiW(+?J$N&4x%+eMRhu<HJG0>Y9EgF{e>5=%mX
+zw0ZBHO}`17aiQtA*|Ca~UKibF1WtM|IGe5qXCo&PoY*N5Cy^;63iJM;3zT4`h*Jg|
+zME%^%aMF9hBqJCss{-fHNpRX`(d}$yjI$oF?uFoy$xvL<s<Sp3J#pLtAc(Iy8B=+`
+zt${OS5Q}9HXRl7Wa^2CSeB8WpNIM-oxFve6DBzA9F6iqn<QY-81MWnXxrj{F`=Pl`
+zbJ4YEz-4V}++4e>IsTH~tHTk)Xf(_xR*B<k9F-vrS9x_UP7Eu9C;r#vh2F|a@7(#9
+X&z^th?CWpz1XbL6$BvEGPxSr+gD;<J
+
+diff --git a/src/docs/src/documentation/content/xdocs/zookeeperAdmin.xml b/src/docs/src/documentation/content/xdocs/zookeeperAdmin.xml
+index 7f9cf18..13008b1 100644
+--- a/src/docs/src/documentation/content/xdocs/zookeeperAdmin.xml
++++ b/src/docs/src/documentation/content/xdocs/zookeeperAdmin.xml
+@@ -731,7 +731,7 @@ server.3=zoo3:2888:3888</programlisting>
+               level) that a single client, identified by IP address, may make
+               to a single member of the ZooKeeper ensemble. This is used to 
+               prevent certain classes of DoS attacks, including file 
+-              descriptor exhaustion. The default is 10. Setting this to 0 
++              descriptor exhaustion. The default is 60. Setting this to 0 
+               entirely removes the limit on concurrent connections.</para>
+             </listitem>
+            </varlistentry>
+diff --git a/src/java/main/org/apache/zookeeper/server/NIOServerCnxn.java b/src/java/main/org/apache/zookeeper/server/NIOServerCnxn.java
+index d72c932..e63370d 100644
+--- a/src/java/main/org/apache/zookeeper/server/NIOServerCnxn.java
++++ b/src/java/main/org/apache/zookeeper/server/NIOServerCnxn.java
+@@ -112,7 +112,7 @@ public class NIOServerCnxn implements Watcher, ServerCnxn {
+ 
+         int outstandingLimit = 1;
+ 
+-        int maxClientCnxns = 10;
++        int maxClientCnxns = 60;
+ 
+         /**
+          * Construct a new server connection factory which will accept an unlimited number
+diff --git a/src/java/main/org/apache/zookeeper/server/quorum/QuorumPeerConfig.java b/src/java/main/org/apache/zookeeper/server/quorum/QuorumPeerConfig.java
+index 018c99d..284f7bd 100644
+--- a/src/java/main/org/apache/zookeeper/server/quorum/QuorumPeerConfig.java
++++ b/src/java/main/org/apache/zookeeper/server/quorum/QuorumPeerConfig.java
+@@ -46,7 +46,7 @@ public class QuorumPeerConfig {
+     protected String dataDir;
+     protected String dataLogDir;
+     protected int tickTime = ZooKeeperServer.DEFAULT_TICK_TIME;
+-    protected int maxClientCnxns = 10;
++    protected int maxClientCnxns = 60;
+     /** defaults to -1 if not set explicitly */
+     protected int minSessionTimeout = -1;
+     /** defaults to -1 if not set explicitly */
+-- 
+1.7.0.4
+

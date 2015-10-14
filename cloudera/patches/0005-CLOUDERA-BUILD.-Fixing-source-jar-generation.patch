@@ -1,0 +1,103 @@
+From 09249fae539277e80c4b75009074222bd29e2866 Mon Sep 17 00:00:00 2001
+From: Andrew Bayer <andrew.bayer@gmail.com>
+Date: Mon, 7 Mar 2011 14:31:35 -0800
+Subject: [PATCH 05/22] CLOUDERA-BUILD. Fixing source jar generation.
+
+---
+ cloudera/do-release-build                  |    2 +-
+ cloudera/maven-packaging/zookeeper/pom.xml |   48 +++++++++++++++-------------
+ 2 files changed, 27 insertions(+), 23 deletions(-)
+
+diff --git a/cloudera/do-release-build b/cloudera/do-release-build
+index 257b559..5f7c1bb 100755
+--- a/cloudera/do-release-build
++++ b/cloudera/do-release-build
+@@ -44,4 +44,4 @@ JAVA_HOME=$JAVA32_HOME \
+ # Change to cloudera/maven directory, and install
+ # (and if called from CDH nightly build, deploy) artifacts into Maven repository
+ cd $BIN_DIR/maven-packaging
+-mvn -Dnot.cdh.release.build=false source:jar install $DO_MAVEN_DEPLOY
++mvn -Dnot.cdh.release.build=false install $DO_MAVEN_DEPLOY
+diff --git a/cloudera/maven-packaging/zookeeper/pom.xml b/cloudera/maven-packaging/zookeeper/pom.xml
+index 0dfe87d..d8f2de8 100644
+--- a/cloudera/maven-packaging/zookeeper/pom.xml
++++ b/cloudera/maven-packaging/zookeeper/pom.xml
+@@ -86,6 +86,7 @@
+     </dependency>
+   </dependencies>
+   
++
+   <build>
+     <plugins>
+       <plugin>
+@@ -93,18 +94,6 @@
+         <artifactId>build-helper-maven-plugin</artifactId>
+         <executions>
+           <execution>
+-            <id>add-source</id>
+-            <phase>generate-sources</phase>
+-            <goals>
+-              <goal>add-source</goal>
+-            </goals>
+-            <configuration>
+-              <sources>
+-                <source>${basedir}/../../../src</source>
+-              </sources>
+-            </configuration>
+-          </execution>
+-          <execution>
+             <id>add-jar</id>
+             <phase>package</phase>
+             <goals>
+@@ -116,6 +105,11 @@
+                   <file>${basedir}/../../../build/zookeeper-${project.version}.jar</file>
+                   <type>jar</type>
+                 </artifact>
++                <artifact>
++                  <file>${basedir}/target/zookeeper-${project.version}-sources.jar</file>
++                  <type>jar</type>
++                  <classifier>sources</classifier>
++                </artifact>
+               </artifacts>
+             </configuration>
+           </execution>
+@@ -123,16 +117,26 @@
+       </plugin>
+       <plugin>
+         <groupId>org.apache.maven.plugins</groupId>
+-        <artifactId>maven-source-plugin</artifactId>
+-      </plugin>
+-      <plugin>
+-        <groupId>org.apache.maven.plugins</groupId>
+-        <artifactId>maven-compiler-plugin</artifactId>
+-        <configuration>
+-          <excludes>
+-            <exclude>**/*.java</exclude>
+-          </excludes>
+-        </configuration>
++        <artifactId>maven-antrun-plugin</artifactId>
++        <executions>
++          <execution>
++            <id>add-source-jar</id>
++            <phase>generate-sources</phase>
++            <goals>
++              <goal>run</goal>
++            </goals>
++            <configuration>
++              <target>
++                <mkdir dir="${basedir}/target" />
++                <jar destfile="${basedir}/target/zookeeper-${project.version}-sources.jar">
++                  <fileset dir="${basedir}/../../../src">
++                    <include name="**/*" />
++                  </fileset>
++                </jar>
++              </target>
++            </configuration>
++          </execution>
++        </executions>
+       </plugin>
+     </plugins>
+   </build>
+-- 
+1.7.0.4
+

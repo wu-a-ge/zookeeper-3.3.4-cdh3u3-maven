@@ -1,0 +1,24 @@
+From 36109865fc66e8badb50741e6c4b78d2c69c0593 Mon Sep 17 00:00:00 2001
+From: Roman Shaposhnik <rvs@cloudera.com>
+Date: Mon, 6 Jun 2011 18:19:57 -0700
+Subject: [PATCH 09/22] CDH-3144. Inconsistency in naming zookeper configuration directory
+
+---
+ cloudera/install_zookeeper.sh |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/cloudera/install_zookeeper.sh b/cloudera/install_zookeeper.sh
+index f921b84..1d81421 100755
+--- a/cloudera/install_zookeeper.sh
++++ b/cloudera/install_zookeeper.sh
+@@ -109,6 +109,7 @@ cp build/lib/*.jar $PREFIX/$LIB_DIR/lib
+ # Copy in the configuration files
+ install -d -m 0755 $PREFIX/$CONF_DIST_DIR
+ cp conf/* $PREFIX/$CONF_DIST_DIR/
++ln -s $CONF_DIR $PREFIX/$LIB_DIR/conf
+ 
+ # Copy in the /usr/bin/zookeeper-server wrapper
+ install -d -m 0755 $PREFIX/$LIB_DIR/bin
+-- 
+1.7.0.4
+

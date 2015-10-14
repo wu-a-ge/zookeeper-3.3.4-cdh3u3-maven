@@ -1,0 +1,25 @@
+From a111f7300947c87cb11cf5509474767581e721a1 Mon Sep 17 00:00:00 2001
+From: Andrew Bayer <andrew@cloudera.com>
+Date: Fri, 2 Dec 2011 15:12:40 -0800
+Subject: [PATCH 19/22] CLOUDERA-BUILD. Setting up for 3.3.4.
+
+---
+ cloudera/maven-packaging/zookeeper/pom.xml |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/cloudera/maven-packaging/zookeeper/pom.xml b/cloudera/maven-packaging/zookeeper/pom.xml
+index b17c742..018eda5 100644
+--- a/cloudera/maven-packaging/zookeeper/pom.xml
++++ b/cloudera/maven-packaging/zookeeper/pom.xml
+@@ -29,7 +29,7 @@
+   
+   <groupId>org.apache.zookeeper</groupId>
+   <artifactId>zookeeper</artifactId>
+-  <version>3.3.3-cdh3u3-SNAPSHOT</version>
++  <version>3.3.4-cdh3u3-SNAPSHOT</version>
+   <packaging>pom</packaging>
+ 
+   <dependencies>
+-- 
+1.7.0.4
+

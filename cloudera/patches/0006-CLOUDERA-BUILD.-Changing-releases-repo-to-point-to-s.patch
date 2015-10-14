@@ -1,0 +1,39 @@
+From 4b6a6160e9e0140826da755ccdced51ef7d29cfa Mon Sep 17 00:00:00 2001
+From: Andrew Bayer <andrew.bayer@gmail.com>
+Date: Tue, 8 Mar 2011 12:52:55 -0800
+Subject: [PATCH 06/22] CLOUDERA-BUILD. Changing releases repo to point to staging area.
+
+---
+ cloudera-pom.xml                 |    2 +-
+ cloudera/maven-packaging/pom.xml |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/cloudera-pom.xml b/cloudera-pom.xml
+index 4631bb5..a92207a 100644
+--- a/cloudera-pom.xml
++++ b/cloudera-pom.xml
+@@ -66,7 +66,7 @@
+       <repositories>
+         <repository>
+           <id>cdh.releases.repo</id>
+-          <url>https://repository.cloudera.com/content/repositories/releases</url>
++          <url>https://repository.cloudera.com/content/groups/cdh-releases-rcs</url>
+           <name>CDH Releases Repository</name>
+           <snapshots>
+             <enabled>false</enabled>
+diff --git a/cloudera/maven-packaging/pom.xml b/cloudera/maven-packaging/pom.xml
+index 2a72c38..cb552f2 100644
+--- a/cloudera/maven-packaging/pom.xml
++++ b/cloudera/maven-packaging/pom.xml
+@@ -34,7 +34,7 @@
+   <repositories>
+     <repository>
+       <id>cdh.releases.repo</id>
+-      <url>https://repository.cloudera.com/content/repositories/releases</url>
++      <url>https://repository.cloudera.com/content/groups/cdh-releases-rcs</url>
+       <name>CDH Releases Repository</name>
+       <snapshots>
+         <enabled>false</enabled>
+-- 
+1.7.0.4
+

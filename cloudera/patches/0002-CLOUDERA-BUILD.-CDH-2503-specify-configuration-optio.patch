@@ -1,0 +1,27 @@
+From a9108d99fc463e0286d73277232dd057e24fd631 Mon Sep 17 00:00:00 2001
+From: Patrick Hunt <phunt1@gmail.com>
+Date: Tue, 1 Feb 2011 00:44:30 -0800
+Subject: [PATCH 02/22] CLOUDERA-BUILD. CDH-2503 - specify configuration options for log location/rootlogger/threshold/etc...
+
+Description: package overrides the log4j defaults
+---
+ cloudera/install_zookeeper.sh |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/cloudera/install_zookeeper.sh b/cloudera/install_zookeeper.sh
+index 93414dc..f921b84 100755
+--- a/cloudera/install_zookeeper.sh
++++ b/cloudera/install_zookeeper.sh
+@@ -136,6 +136,9 @@ export ZOOPIDFILE=\${ZOOPIDFILE:-/var/run/zookeeper/zookeeper-server.pid}
+ export ZOOKEEPER_HOME=\${ZOOKEEPER_CONF:-/usr/lib/zookeeper}
+ export ZOOKEEPER_CONF=\${ZOOKEEPER_CONF:-/etc/zookeeper}
+ export CLASSPATH=\$CLASSPATH:\$ZOOKEEPER_CONF:\$ZOOKEEPER_HOME/*:\$ZOOKEEPER_HOME/lib/*
++export ZOO_LOG_DIR=/var/log/zookeeper
++export ZOO_LOG4J_PROP=INFO,ROLLINGFILE
++export JVMFLAGS=-Dzookeeper.log.threshold=INFO
+ env CLASSPATH=\$CLASSPATH /usr/lib/zookeeper/bin/zkServer.sh "\$@"
+ EOF
+ chmod 755 $wrapper
+-- 
+1.7.0.4
+

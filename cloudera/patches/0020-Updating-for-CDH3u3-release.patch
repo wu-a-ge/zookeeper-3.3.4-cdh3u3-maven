@@ -1,0 +1,67 @@
+From 3347250a5f0d24634e4eb6013207e20e1af8e1b5 Mon Sep 17 00:00:00 2001
+From: Andrew Bayer <andrew@cloudera.com>
+Date: Tue, 20 Dec 2011 10:43:40 -0800
+Subject: [PATCH 20/22] Updating for CDH3u3 release.
+
+---
+ cloudera-pom.xml                           |    4 ++--
+ cloudera/maven-packaging/pom.xml           |    4 ++--
+ cloudera/maven-packaging/zookeeper/pom.xml |    2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/cloudera-pom.xml b/cloudera-pom.xml
+index 5e551b1..53e6f8c 100644
+--- a/cloudera-pom.xml
++++ b/cloudera-pom.xml
+@@ -21,13 +21,13 @@
+   <parent>
+     <groupId>com.cloudera.cdh</groupId>
+     <artifactId>zookeeper-root</artifactId>
+-    <version>3.0-u3-SNAPSHOT</version>
++    <version>3.3.4-cdh3u3</version>
+     <relativePath>cloudera/maven-packaging/pom.xml</relativePath>
+   </parent>
+   
+   <groupId>com.cloudera.cdh</groupId>
+   <artifactId>zookeeper-ant</artifactId>
+-  <version>3.0-u3-SNAPSHOT</version>
++  <version>3.3.4-cdh3u3</version>
+   <packaging>pom</packaging>
+   
+   <scm>
+diff --git a/cloudera/maven-packaging/pom.xml b/cloudera/maven-packaging/pom.xml
+index 2de86ae..1dd0403 100644
+--- a/cloudera/maven-packaging/pom.xml
++++ b/cloudera/maven-packaging/pom.xml
+@@ -21,13 +21,13 @@
+   <parent>
+     <groupId>com.cloudera.cdh</groupId>
+     <artifactId>cdh-root</artifactId>
+-    <version>3.0-u3-SNAPSHOT</version>
++    <version>3.0-u3</version>
+     <relativePath>../../../../../pom.xml</relativePath>
+   </parent>
+   
+   <groupId>com.cloudera.cdh</groupId>
+   <artifactId>zookeeper-root</artifactId>
+-  <version>3.0-u3-SNAPSHOT</version>
++  <version>3.3.4-cdh3u3</version>
+   <packaging>pom</packaging>
+   
+   <name>CDH ZooKeeper root</name>
+diff --git a/cloudera/maven-packaging/zookeeper/pom.xml b/cloudera/maven-packaging/zookeeper/pom.xml
+index 018eda5..83362b6 100644
+--- a/cloudera/maven-packaging/zookeeper/pom.xml
++++ b/cloudera/maven-packaging/zookeeper/pom.xml
+@@ -23,7 +23,7 @@
+   <parent>
+     <groupId>com.cloudera.cdh</groupId>
+     <artifactId>zookeeper-root</artifactId>
+-    <version>3.0-u3-SNAPSHOT</version>
++    <version>3.3.4-cdh3u3</version>
+     <relativePath>../pom.xml</relativePath>
+   </parent>
+   
+-- 
+1.7.0.4
+

@@ -1,0 +1,71 @@
+From 9c45eaa6333c02250b622e652e5b501b8c4080bb Mon Sep 17 00:00:00 2001
+From: Patrick Hunt <phunt1@gmail.com>
+Date: Tue, 1 Feb 2011 00:19:56 -0800
+Subject: [PATCH 14/22] ZOOKEEPER-980. allow configuration parameters for log4j.properties
+
+    Description: log4j.properties can contain properties that may be overridden using system properties. Hadoop's bin/hadoop is doing this already, I will be replicating in ZK's config.
+    Reason: Improvement
+    Author: Patrick Hunt
+    Ref:  CDH-2503
+---
+ conf/log4j.properties |   19 ++++++++++++++-----
+ 1 files changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/conf/log4j.properties b/conf/log4j.properties
+index 2705843..437b0c1 100644
+--- a/conf/log4j.properties
++++ b/conf/log4j.properties
+@@ -1,3 +1,12 @@
++# Define some default values that can be overridden by system properties
++zookeeper.root.logger=INFO, CONSOLE
++zookeeper.console.threshold=INFO
++zookeeper.log.dir=.
++zookeeper.log.file=zookeeper.log
++zookeeper.log.threshold=DEBUG
++zookeeper.tracelog.dir=.
++zookeeper.tracelog.file=zookeeper_trace.log
++
+ #
+ # ZooKeeper Logging Configuration
+ #
+@@ -5,7 +14,7 @@
+ # Format is "<default threshold> (, <appender>)+
+ 
+ # DEFAULT: console appender only
+-log4j.rootLogger=INFO, CONSOLE
++log4j.rootLogger=${zookeeper.root.logger}
+ 
+ # Example with rolling log file
+ #log4j.rootLogger=DEBUG, CONSOLE, ROLLINGFILE
+@@ -17,7 +26,7 @@ log4j.rootLogger=INFO, CONSOLE
+ # Log INFO level and above messages to the console
+ #
+ log4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender
+-log4j.appender.CONSOLE.Threshold=INFO
++log4j.appender.CONSOLE.Threshold=${zookeeper.console.threshold}
+ log4j.appender.CONSOLE.layout=org.apache.log4j.PatternLayout
+ log4j.appender.CONSOLE.layout.ConversionPattern=%d{ISO8601} - %-5p [%t:%C{1}@%L] - %m%n
+ 
+@@ -25,8 +34,8 @@ log4j.appender.CONSOLE.layout.ConversionPattern=%d{ISO8601} - %-5p [%t:%C{1}@%L]
+ # Add ROLLINGFILE to rootLogger to get log file output
+ #    Log DEBUG level and above messages to a log file
+ log4j.appender.ROLLINGFILE=org.apache.log4j.RollingFileAppender
+-log4j.appender.ROLLINGFILE.Threshold=DEBUG
+-log4j.appender.ROLLINGFILE.File=zookeeper.log
++log4j.appender.ROLLINGFILE.Threshold=${zookeeper.log.threshold}
++log4j.appender.ROLLINGFILE.File=${zookeeper.log.dir}/${zookeeper.log.file}
+ 
+ # Max log file size of 10MB
+ log4j.appender.ROLLINGFILE.MaxFileSize=10MB
+@@ -42,7 +51,7 @@ log4j.appender.ROLLINGFILE.layout.ConversionPattern=%d{ISO8601} - %-5p [%t:%C{1}
+ #    Log DEBUG level and above messages to a log file
+ log4j.appender.TRACEFILE=org.apache.log4j.FileAppender
+ log4j.appender.TRACEFILE.Threshold=TRACE
+-log4j.appender.TRACEFILE.File=zookeeper_trace.log
++log4j.appender.TRACEFILE.File=${zookeeper.tracelog.dir}/${zookeeper.tracelog.file}
+ 
+ log4j.appender.TRACEFILE.layout=org.apache.log4j.PatternLayout
+ ### Notice we are including log4j's NDC here (%x)
+-- 
+1.7.0.4
+

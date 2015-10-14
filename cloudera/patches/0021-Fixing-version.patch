@@ -1,0 +1,25 @@
+From 1543b51133b1ca839ab584e0bb787bb1f907730f Mon Sep 17 00:00:00 2001
+From: Andrew Bayer <andrew@cloudera.com>
+Date: Tue, 20 Dec 2011 13:30:22 -0800
+Subject: [PATCH 21/22] Fixing version
+
+---
+ cloudera/maven-packaging/zookeeper/pom.xml |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/cloudera/maven-packaging/zookeeper/pom.xml b/cloudera/maven-packaging/zookeeper/pom.xml
+index 83362b6..6a93b86 100644
+--- a/cloudera/maven-packaging/zookeeper/pom.xml
++++ b/cloudera/maven-packaging/zookeeper/pom.xml
+@@ -29,7 +29,7 @@
+   
+   <groupId>org.apache.zookeeper</groupId>
+   <artifactId>zookeeper</artifactId>
+-  <version>3.3.4-cdh3u3-SNAPSHOT</version>
++  <version>3.3.4-cdh3u3</version>
+   <packaging>pom</packaging>
+ 
+   <dependencies>
+-- 
+1.7.0.4
+

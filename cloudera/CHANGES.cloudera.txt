@@ -1,0 +1,188 @@
+commit 17323ec2e191cde431e7673069b5e00282aeb3df
+Author: Patrick Hunt <phunt@cloudera.com>
+Date:   Wed Dec 28 11:34:14 2011 -0800
+
+    ZOOKEEPER-1089. zkServer.sh status does not work due to invalid option of nc
+    
+    Reason: Bug
+    Author: Roman Shaposhnik
+    Ref: CDH-4003
+
+commit 1543b51133b1ca839ab584e0bb787bb1f907730f
+Author: Andrew Bayer <andrew@cloudera.com>
+Date:   Tue Dec 20 13:30:22 2011 -0800
+
+    Fixing version
+
+commit 3347250a5f0d24634e4eb6013207e20e1af8e1b5
+Author: Andrew Bayer <andrew@cloudera.com>
+Date:   Tue Dec 20 10:43:40 2011 -0800
+
+    Updating for CDH3u3 release.
+
+commit a111f7300947c87cb11cf5509474767581e721a1
+Author: Andrew Bayer <andrew@cloudera.com>
+Date:   Fri Dec 2 15:12:40 2011 -0800
+
+    CLOUDERA-BUILD. Setting up for 3.3.4.
+
+commit 841d18724eff75d69376a75177141174c3128587
+Author: Patrick D. Hunt <phunt@apache.org>
+Date:   Sun Feb 27 06:51:13 2011 +0000
+
+    ZOOKEEPER-983. running zkServer.sh start remotely using ssh hangs (phunt)
+    
+    git-svn-id: https://svn.apache.org/repos/asf/zookeeper/trunk@1074992 13f79535-47bb-0310-9956-ffa450edef68
+
+commit 0bd9e12492d5570d7901a26770ff90748403d48b
+Author: Roman Shaposhnik <rvs@cloudera.com>
+Date:   Wed Oct 5 15:12:20 2011 -0700
+
+    ZOOKEEPER-1212. zkServer.sh stop action is not conformat with LSB para 20.2 Init Script Actions
+    
+    Reason: Bug
+    Author: Roman Shaposhnik
+    Ref: DISTRO-320
+
+commit 07bc1b7be081c9a589b2d722eaf7decf2ad7255c
+Author: Roman Shaposhnik <rvs@cloudera.com>
+Date:   Fri Jun 3 11:39:17 2011 -0700
+
+    ZOOKEEPER-1084. Hard-coding a well-known location for configuration directory gives less flexibility for packaging Zookeeper configurations
+
+commit de57447d00357fd94ce3900bbeace9bc28fd630b
+Author: Patrick Hunt <phunt@cloudera.com>
+Date:   Mon May 2 10:28:53 2011 -0700
+
+    ZOOKEEPER-1030. higher default for maxClientCnxns
+    
+    The default for maxClientCnxns is 10, which is too low for many
+    applications. For example, HBase users often run MR jobs where each
+    task needs to use ZooKeeper to talk to HBase. This means that each
+    slot on the tasktracker will have at least one ZK connection. With
+    today's beefy machines, that's easily 20+ connections per node. I
+    would suggest bumping the default to 60, which will still protect
+    against runaway nodes (eg a leak in a tight loop) but won't impact MR
+    jobs that need to talk to ZK.
+    
+    Reason: Improvement
+    Author: Todd Lipcon
+    Ref: CDH-2877
+
+commit 9c45eaa6333c02250b622e652e5b501b8c4080bb
+Author: Patrick Hunt <phunt1@gmail.com>
+Date:   Tue Feb 1 00:19:56 2011 -0800
+
+    ZOOKEEPER-980. allow configuration parameters for log4j.properties
+    
+        Description: log4j.properties can contain properties that may be overridden using system properties. Hadoop's bin/hadoop is doing this already, I will be replicating in ZK's config.
+        Reason: Improvement
+        Author: Patrick Hunt
+        Ref:  CDH-2503
+
+commit 50733dfc7dfb7a227ce8d01cffe4ec4f4e92e161
+Author: Patrick Hunt <phunt1@gmail.com>
+Date:   Mon Feb 28 13:18:23 2011 -0800
+
+    CLOUDERA-BUILD. Add support for '+' in the version string.
+    
+    Description: Update code generator to correctly handle our non-standard + format in the version string
+    Reason: Improvement
+    Author: Patrick Hunt
+    Ref:  ZOOKEEPER-913
+
+commit 46cb31554e88e3bc1b904636c456585f57ba829f
+Author: Andrew Bayer <andrew@cloudera.com>
+Date:   Wed Nov 2 13:14:40 2011 -0700
+
+    CLOUDERA-BUILD. Adding IVY_MIRROR_PROPS to ant calls.
+    
+    This will allow overriding the URLs Ivy uses for Maven repositories,
+    so that we can have internal builds take advantage of our internal
+    Maven mirror.
+
+commit 58cfb3d735af9625c746561d2d31108b01d4bf9f
+Author: Jenkins <dev-kitchen@cloudera.com>
+Date:   Sat Mar 12 14:06:29 2011 -0800
+
+    Prepping for CDH3u3 development
+
+commit 1c2348ecac4393647fe6a6be96d2a164f5af140f
+Author: Patrick Hunt <phunt@cloudera.com>
+Date:   Fri Jul 15 16:08:33 2011 -0700
+
+    CDH-3349 packaging regression in zookeeper configuration
+
+commit 36109865fc66e8badb50741e6c4b78d2c69c0593
+Author: Roman Shaposhnik <rvs@cloudera.com>
+Date:   Mon Jun 6 18:19:57 2011 -0700
+
+    CDH-3144. Inconsistency in naming zookeper configuration directory
+
+commit e40b88a31752d6c2b5cd6db2b8c5014075579370
+Author: root <root@elmo01.(none)>
+Date:   Fri Jun 17 18:14:09 2011 -0700
+
+    KITCHEN-1300. Building RPMs from SRPMs in CDH needs to rebuild the projects
+
+commit ec8abcd86baed63bf365f2b595c691c0f50fb96b
+Author: Andrew Bayer <andrew@cloudera.com>
+Date:   Tue Jun 7 13:25:17 2011 -0700
+
+    CLOUDERA-BUILD. DISTRO-248 - include cloudera-pom.xml and build.properties in tarball.
+
+commit 4b6a6160e9e0140826da755ccdced51ef7d29cfa
+Author: Andrew Bayer <andrew.bayer@gmail.com>
+Date:   Tue Mar 8 12:52:55 2011 -0800
+
+    CLOUDERA-BUILD. Changing releases repo to point to staging area.
+
+commit 09249fae539277e80c4b75009074222bd29e2866
+Author: Andrew Bayer <andrew.bayer@gmail.com>
+Date:   Mon Mar 7 14:31:35 2011 -0800
+
+    CLOUDERA-BUILD. Fixing source jar generation.
+
+commit 6353b9ab79e025ca06cd3ace0b08ea50aadc10f3
+Author: Andrew Bayer <andrew.bayer@gmail.com>
+Date:   Mon Mar 7 11:29:13 2011 -0800
+
+    CLOUDERA-BUILD. Generate source jar, and use original jar file as
+    Maven artifact.
+    
+    * Fixes KITCHEN-866 and DISTRO-109 respectively.
+
+commit d642c5835d64e993e812b62298893de857b1cd09
+Author: Andrew Bayer <andrew.bayer@gmail.com>
+Date:   Mon Mar 7 10:52:18 2011 -0800
+
+    CLOUDERA-BUILD. Simplifying repository setup.
+
+commit a9108d99fc463e0286d73277232dd057e24fd631
+Author: Patrick Hunt <phunt1@gmail.com>
+Date:   Tue Feb 1 00:44:30 2011 -0800
+
+    CLOUDERA-BUILD. CDH-2503 - specify configuration options for log location/rootlogger/threshold/etc...
+    
+    Description: package overrides the log4j defaults
+
+commit 80f2de1480b254fe464d22bb719bbaf4c62c7ac2
+Author: newalex <newalex@ubuntu64-build01.(none)>
+Date:   Tue Jun 1 15:40:10 2010 -0700
+
+    CLOUDERA-BUILD. ZooKeeper packages for CDH
+    
+    Description: Our infastructure for building packages for ZooKeeper
+    
+    Note: This is a squash down of all the build related changes on cdh-3.3.2
+      CDH-2503 - Revert ZK log4j.properties change
+        Description: this change was causing problems with the build/hudson. We'll
+        move this into packaging instead (the package code will setup log4j.properties
+        properly for the particular installation).
+      CDH Mavenization.
+      Preparing for CDH3B4 release.
+      Preparing for cdh3u0 development.
+      Fixing relative paths for POMs.
+      Fixing KITCHEN-815.
+        * Invoking mvn for property generation before anything else happens.
+        * Adding ant-contrib jar to support that.

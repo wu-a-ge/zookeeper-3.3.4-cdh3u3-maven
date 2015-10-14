@@ -1,0 +1,32 @@
+From 46cb31554e88e3bc1b904636c456585f57ba829f Mon Sep 17 00:00:00 2001
+From: Andrew Bayer <andrew@cloudera.com>
+Date: Wed, 2 Nov 2011 13:14:40 -0700
+Subject: [PATCH 12/22] CLOUDERA-BUILD. Adding IVY_MIRROR_PROPS to ant calls.
+
+This will allow overriding the URLs Ivy uses for Maven repositories,
+so that we can have internal builds take advantage of our internal
+Maven mirror.
+---
+ cloudera/do-release-build |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
+
+diff --git a/cloudera/do-release-build b/cloudera/do-release-build
+index 15e8cde..02a58a2 100755
+--- a/cloudera/do-release-build
++++ b/cloudera/do-release-build
+@@ -8,10 +8,11 @@ set -ex
+ # Do the build
+ BIN_DIR=$(readlink -f $(dirname $0))
+ RELEASE_DIR=$BIN_DIR/..
++IVY_MIRROR_PROP=${IVY_MIRROR_PROP:-http://repo1.maven.org/maven2/}
+ 
+ cd $RELEASE_DIR
+ 
+-ant -propertyfile cloudera/build.properties package tar  -Dversion=${FULL_VERSION}
++ant -propertyfile cloudera/build.properties package tar  -Dversion=${FULL_VERSION} -Drepo.maven.org=${IVY_MIRROR_PROP}
+ 
+ # Change to cloudera/maven directory, and install
+ # (and if called from CDH nightly build, deploy) artifacts into Maven repository
+-- 
+1.7.0.4
+

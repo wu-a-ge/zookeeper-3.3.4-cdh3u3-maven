@@ -1,0 +1,102 @@
+From 6353b9ab79e025ca06cd3ace0b08ea50aadc10f3 Mon Sep 17 00:00:00 2001
+From: Andrew Bayer <andrew.bayer@gmail.com>
+Date: Mon, 7 Mar 2011 11:29:13 -0800
+Subject: [PATCH 04/22] CLOUDERA-BUILD. Generate source jar, and use original jar file as
+ Maven artifact.
+
+* Fixes KITCHEN-866 and DISTRO-109 respectively.
+---
+ cloudera/do-release-build                  |    2 +-
+ cloudera/maven-packaging/zookeeper/pom.xml |   50 ++++++++++++++++++++-------
+ 2 files changed, 38 insertions(+), 14 deletions(-)
+
+diff --git a/cloudera/do-release-build b/cloudera/do-release-build
+index 5f7c1bb..257b559 100755
+--- a/cloudera/do-release-build
++++ b/cloudera/do-release-build
+@@ -44,4 +44,4 @@ JAVA_HOME=$JAVA32_HOME \
+ # Change to cloudera/maven directory, and install
+ # (and if called from CDH nightly build, deploy) artifacts into Maven repository
+ cd $BIN_DIR/maven-packaging
+-mvn -Dnot.cdh.release.build=false install $DO_MAVEN_DEPLOY
++mvn -Dnot.cdh.release.build=false source:jar install $DO_MAVEN_DEPLOY
+diff --git a/cloudera/maven-packaging/zookeeper/pom.xml b/cloudera/maven-packaging/zookeeper/pom.xml
+index 732500a..0dfe87d 100644
+--- a/cloudera/maven-packaging/zookeeper/pom.xml
++++ b/cloudera/maven-packaging/zookeeper/pom.xml
+@@ -30,7 +30,7 @@
+   <groupId>org.apache.zookeeper</groupId>
+   <artifactId>zookeeper</artifactId>
+   <version>3.3.3-cdh3u0-SNAPSHOT</version>
+-  <packaging>jar</packaging>
++  <packaging>pom</packaging>
+ 
+   <dependencies>
+     <dependency>
+@@ -89,27 +89,51 @@
+   <build>
+     <plugins>
+       <plugin>
+-        <groupId>org.apache.maven.plugins</groupId>
+-        <artifactId>maven-antrun-plugin</artifactId>
+-        <inherited>false</inherited>
++        <groupId>org.codehaus.mojo</groupId>
++        <artifactId>build-helper-maven-plugin</artifactId>
+         <executions>
+           <execution>
+-            <id>compile</id>
++            <id>add-source</id>
++            <phase>generate-sources</phase>
++            <goals>
++              <goal>add-source</goal>
++            </goals>
+             <configuration>
+-              <target>
+-                <copy file="${basedir}/../../../build/zookeeper-${project.version}.jar"
+-                      todir="${basedir}/target"/>
+-                <unzip src="${basedir}/target/zookeeper-${project.version}.jar"
+-                       dest="${basedir}/target/classes"/>
+-              </target>
++              <sources>
++                <source>${basedir}/../../../src</source>
++              </sources>
+             </configuration>
++          </execution>
++          <execution>
++            <id>add-jar</id>
++            <phase>package</phase>
+             <goals>
+-              <goal>run</goal>
++              <goal>attach-artifact</goal>
+             </goals>
+-            <phase>compile</phase>
++            <configuration>
++              <artifacts>
++                <artifact>
++                  <file>${basedir}/../../../build/zookeeper-${project.version}.jar</file>
++                  <type>jar</type>
++                </artifact>
++              </artifacts>
++            </configuration>
+           </execution>
+         </executions>
+       </plugin>
++      <plugin>
++        <groupId>org.apache.maven.plugins</groupId>
++        <artifactId>maven-source-plugin</artifactId>
++      </plugin>
++      <plugin>
++        <groupId>org.apache.maven.plugins</groupId>
++        <artifactId>maven-compiler-plugin</artifactId>
++        <configuration>
++          <excludes>
++            <exclude>**/*.java</exclude>
++          </excludes>
++        </configuration>
++      </plugin>
+     </plugins>
+   </build>
+     
+-- 
+1.7.0.4
+

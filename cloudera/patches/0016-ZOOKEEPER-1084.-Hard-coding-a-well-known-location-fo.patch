@@ -1,0 +1,30 @@
+From 07bc1b7be081c9a589b2d722eaf7decf2ad7255c Mon Sep 17 00:00:00 2001
+From: Roman Shaposhnik <rvs@cloudera.com>
+Date: Fri, 3 Jun 2011 11:39:17 -0700
+Subject: [PATCH 16/22] ZOOKEEPER-1084. Hard-coding a well-known location for configuration directory gives less flexibility for packaging Zookeeper configurations
+
+---
+ bin/zkEnv.sh |    7 +------
+ 1 files changed, 1 insertions(+), 6 deletions(-)
+
+diff --git a/bin/zkEnv.sh b/bin/zkEnv.sh
+index 8dce27a..bead0b4 100755
+--- a/bin/zkEnv.sh
++++ b/bin/zkEnv.sh
+@@ -24,12 +24,7 @@
+ # a sibling of this script's directory
+ if [ "x$ZOOCFGDIR" = "x" ]
+ then
+-    if [ -d "/etc/zookeeper" ]
+-    then
+-        ZOOCFGDIR="/etc/zookeeper"
+-    else
+-        ZOOCFGDIR="$ZOOBINDIR/../conf"
+-    fi
++    ZOOCFGDIR="$ZOOBINDIR/../conf"
+ fi
+ 
+ if [ "x$ZOOCFG" = "x" ]
+-- 
+1.7.0.4
+

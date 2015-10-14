@@ -1,0 +1,35 @@
+From 841d18724eff75d69376a75177141174c3128587 Mon Sep 17 00:00:00 2001
+From: Patrick D. Hunt <phunt@apache.org>
+Date: Sun, 27 Feb 2011 06:51:13 +0000
+Subject: [PATCH 18/22] ZOOKEEPER-983. running zkServer.sh start remotely using ssh hangs (phunt)
+
+git-svn-id: https://svn.apache.org/repos/asf/zookeeper/trunk@1074992 13f79535-47bb-0310-9956-ffa450edef68
+---
+ bin/zkServer.sh |   11 +++++++++--
+ 1 files changed, 9 insertions(+), 2 deletions(-)
+
+diff --git a/bin/zkServer.sh b/bin/zkServer.sh
+index ca60a43..efff54e 100755
+--- a/bin/zkServer.sh
++++ b/bin/zkServer.sh
+@@ -81,8 +81,15 @@ fi
+ 
+ echo "Using config: $ZOOCFG" >&2
+ 
+-if [ -z $ZOOPIDFILE ]
+-  then ZOOPIDFILE=$(grep dataDir "$ZOOCFG" | sed -e 's/.*=//')/zookeeper_server.pid
++if [ -z $ZOOPIDFILE ]; then
++    ZOO_DATADIR=$(grep dataDir "$ZOOCFG" | sed -e 's/.*=//')
++    if [ ! -d "$ZOO_DATADIR" ]; then
++        mkdir -p "$ZOO_DATADIR"
++    fi
++    ZOOPIDFILE="$ZOO_DATADIR/zookeeper_server.pid"
++else
++    # ensure it exists, otw stop will fail
++    mkdir -p $(dirname "$ZOOPIDFILE")
+ fi
+ 
+ _ZOO_DAEMON_OUT="$ZOO_LOG_DIR/zookeeper.out"
+-- 
+1.7.0.4
+

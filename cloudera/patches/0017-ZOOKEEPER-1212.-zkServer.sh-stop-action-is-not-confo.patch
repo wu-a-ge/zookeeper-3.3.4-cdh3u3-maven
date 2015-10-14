@@ -1,0 +1,27 @@
+From 0bd9e12492d5570d7901a26770ff90748403d48b Mon Sep 17 00:00:00 2001
+From: Roman Shaposhnik <rvs@cloudera.com>
+Date: Wed, 5 Oct 2011 15:12:20 -0700
+Subject: [PATCH 17/22] ZOOKEEPER-1212. zkServer.sh stop action is not conformat with LSB para 20.2 Init Script Actions
+
+Reason: Bug
+Author: Roman Shaposhnik
+Ref: DISTRO-320
+---
+ bin/zkServer.sh |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/bin/zkServer.sh b/bin/zkServer.sh
+index 9c1c29b..ca60a43 100755
+--- a/bin/zkServer.sh
++++ b/bin/zkServer.sh
+@@ -130,6 +130,7 @@ stop)
+       rm "$ZOOPIDFILE"
+       echo STOPPED
+     fi
++    exit 0
+     ;;
+ upgrade)
+     shift
+-- 
+1.7.0.4
+

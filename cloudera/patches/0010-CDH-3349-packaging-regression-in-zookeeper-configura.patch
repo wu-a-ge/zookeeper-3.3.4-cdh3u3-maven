@@ -1,0 +1,32 @@
+From 1c2348ecac4393647fe6a6be96d2a164f5af140f Mon Sep 17 00:00:00 2001
+From: Patrick Hunt <phunt@cloudera.com>
+Date: Fri, 15 Jul 2011 16:08:33 -0700
+Subject: [PATCH 10/22] CDH-3349 packaging regression in zookeeper configuration
+
+---
+ cloudera/install_zookeeper.sh |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/cloudera/install_zookeeper.sh b/cloudera/install_zookeeper.sh
+index 1d81421..0bc6192 100755
+--- a/cloudera/install_zookeeper.sh
++++ b/cloudera/install_zookeeper.sh
+@@ -125,6 +125,7 @@ cat > $wrapper <<EOF
+ #!/bin/sh
+ export ZOOKEEPER_HOME=\${ZOOKEEPER_CONF:-/usr/lib/zookeeper}
+ export ZOOKEEPER_CONF=\${ZOOKEEPER_CONF:-/etc/zookeeper}
++export ZOOCFGDIR=\$ZOOKEEPER_CONF
+ export CLASSPATH=\$CLASSPATH:\$ZOOKEEPER_CONF:\$ZOOKEEPER_HOME/*:\$ZOOKEEPER_HOME/lib/*
+ env CLASSPATH=\$CLASSPATH /usr/lib/zookeeper/bin/zkCli.sh "\$@"
+ EOF
+@@ -136,6 +137,7 @@ cat > $wrapper <<EOF
+ export ZOOPIDFILE=\${ZOOPIDFILE:-/var/run/zookeeper/zookeeper-server.pid}
+ export ZOOKEEPER_HOME=\${ZOOKEEPER_CONF:-/usr/lib/zookeeper}
+ export ZOOKEEPER_CONF=\${ZOOKEEPER_CONF:-/etc/zookeeper}
++export ZOOCFGDIR=\$ZOOKEEPER_CONF
+ export CLASSPATH=\$CLASSPATH:\$ZOOKEEPER_CONF:\$ZOOKEEPER_HOME/*:\$ZOOKEEPER_HOME/lib/*
+ export ZOO_LOG_DIR=/var/log/zookeeper
+ export ZOO_LOG4J_PROP=INFO,ROLLINGFILE
+-- 
+1.7.0.4
+

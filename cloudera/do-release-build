@@ -1,0 +1,20 @@
+#!/bin/bash
+# Copyright (c) 2009 Cloudera, inc
+#
+# Performs a release build
+
+set -ex
+
+# Do the build
+BIN_DIR=$(readlink -f $(dirname $0))
+RELEASE_DIR=$BIN_DIR/..
+IVY_MIRROR_PROP=${IVY_MIRROR_PROP:-http://repo1.maven.org/maven2/}
+
+cd $RELEASE_DIR
+
+ant -propertyfile cloudera/build.properties package tar  -Dversion=${FULL_VERSION} -Drepo.maven.org=${IVY_MIRROR_PROP}
+
+# Change to cloudera/maven directory, and install
+# (and if called from CDH nightly build, deploy) artifacts into Maven repository
+cd $BIN_DIR/maven-packaging
+mvn -Dnot.cdh.release.build=false install $DO_MAVEN_DEPLOY

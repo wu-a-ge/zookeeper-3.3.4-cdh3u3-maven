@@ -1,0 +1,59 @@
+From e40b88a31752d6c2b5cd6db2b8c5014075579370 Mon Sep 17 00:00:00 2001
+From: root <root@elmo01.(none)>
+Date: Fri, 17 Jun 2011 18:14:09 -0700
+Subject: [PATCH 08/22] KITCHEN-1300. Building RPMs from SRPMs in CDH needs to rebuild the projects
+
+---
+ cloudera/do-release-build |   30 +-----------------------------
+ 1 files changed, 1 insertions(+), 29 deletions(-)
+
+diff --git a/cloudera/do-release-build b/cloudera/do-release-build
+index 5f7c1bb..15e8cde 100755
+--- a/cloudera/do-release-build
++++ b/cloudera/do-release-build
+@@ -5,41 +5,13 @@
+ 
+ set -ex
+ 
+-JAVA32_HOME=${JAVA32_HOME:-$JAVA_HOME}
+-
+-# Check that JVMs support the right architectures
+-# Passing -d with an architecture that's not supported results
+-# in a non-zero exit code even with -version
+-if ! $JAVA32_HOME/bin/java -d32 -version ; then
+-  echo Your jvm in $JAVA32_HOME seems like it doesnt support 32-bit mode 1>&2
+-  echo Please set JAVA32_HOME to point to a 32-bit JDK
+-  exit 1
+-fi
+-
+-if ! [ -e $JAVA5_HOME/bin/java ]; then
+-  echo No JAVA5_HOME set. Forrest documentation requires Java 5 to be 1>&2
+-  echo installed. 1>&2
+-  exit 1
+-fi
+-
+-if ! [ -e $FORREST_HOME/bin/forrest ]; then
+-  echo No FORREST_HOME set. Forrest documentation requires Forrest to be 1>&2
+-  echo installed. 1>&2
+-  exit 1
+-fi
+-
+ # Do the build
+ BIN_DIR=$(readlink -f $(dirname $0))
+ RELEASE_DIR=$BIN_DIR/..
+ 
+ cd $RELEASE_DIR
+ 
+-JAVA_HOME=$JAVA32_HOME \
+-  ant \
+-  -Djava5.home=$JAVA5_HOME \
+-  -Dforrest.home=$FORREST_HOME \
+-  -propertyfile cloudera/build.properties \
+-  package tar  -Dversion=${FULL_VERSION}
++ant -propertyfile cloudera/build.properties package tar  -Dversion=${FULL_VERSION}
+ 
+ # Change to cloudera/maven directory, and install
+ # (and if called from CDH nightly build, deploy) artifacts into Maven repository
+-- 
+1.7.0.4
+
