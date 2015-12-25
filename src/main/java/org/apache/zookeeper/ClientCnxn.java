@@ -470,7 +470,7 @@ public class ClientCnxn {
                 return;
             }
             sessionState = event.getState();
-
+            //根据得到的事件通知，从WATCHER中选出需要得到通知的WATCHER
             // materialize the watchers based on the event
             WatcherSetEventPair pair = new WatcherSetEventPair(
                     watcher.materialize(event.getState(), event.getType(),
@@ -534,7 +534,8 @@ public class ClientCnxn {
                       }
                   }
               } else {
-                  Packet p = (Packet) event;
+            	  //处理 异步回调的请求包，同步不应该进来
+            	  Packet p = (Packet) event;
                   int rc = 0;
                   String clientPath = p.clientPath;
                   if (p.replyHeader.getErr() != 0) {
@@ -561,6 +562,7 @@ public class ClientCnxn {
                                               .getStat());
                           }
                       } else {
+                    	  //有错误 ，stat就为NULL
                           cb.processResult(rc, clientPath, p.ctx, null);
                       }
                   } else if (p.response instanceof GetDataResponse) {
@@ -570,6 +572,7 @@ public class ClientCnxn {
                           cb.processResult(rc, clientPath, p.ctx, rsp
                                   .getData(), rsp.getStat());
                       } else {
+                    	//有错误 ，data和stat就为NULL
                           cb.processResult(rc, clientPath, p.ctx, null,
                                   null);
                       }
@@ -590,6 +593,7 @@ public class ClientCnxn {
                           cb.processResult(rc, clientPath, p.ctx, rsp
                                   .getChildren());
                       } else {
+                    	//有错误 ，children就为NULL
                           cb.processResult(rc, clientPath, p.ctx, null);
                       }
                   } else if (p.response instanceof GetChildren2Response) {
@@ -611,6 +615,7 @@ public class ClientCnxn {
                                           : rsp.getPath()
                                     .substring(chrootPath.length())));
                       } else {
+                    	  //错误name为NULL,还是路径名
                           cb.processResult(rc, clientPath, p.ctx, null);
                       }
                   } else if (p.cb instanceof VoidCallback) {
@@ -625,10 +630,11 @@ public class ClientCnxn {
     }
 
     private void finishPacket(Packet p) {
+    	//根据返回状态码来决定是否获取以及获取哪些观察者以备待会通知这些观察者
         if (p.watchRegistration != null) {
             p.watchRegistration.register(p.replyHeader.getErr());
         }
-
+        //回调为空，表明是一个同步的通知，所以可以通知调用端的包可以获取进行后续处理了
         if (p.cb == null) {
             synchronized (p) {
                 p.finished = true;
@@ -777,6 +783,7 @@ public class ClientCnxn {
                 }
                 return;
             }
+            //来自服务端的主动通知(数据改变，创建或删除节点)，在这里组装WatchedEvent,得到路径，状态和类型
             if (replyHdr.getXid() == -1) {
                 // -1 means notification
                 if (LOG.isDebugEnabled()) {
@@ -808,6 +815,7 @@ public class ClientCnxn {
                 throw new IOException("Nothing in the queue, but got "
                         + replyHdr.getXid());
             }
+            //客户端发起的请求，服务端有数据返回，从队列中取出相应的请求包来处理
             Packet packet = null;
             synchronized (pendingQueue) {
                 packet = pendingQueue.remove();
@@ -831,6 +839,7 @@ public class ClientCnxn {
                 if (replyHdr.getZxid() > 0) {
                     lastZxid = replyHdr.getZxid();
                 }
+                //没有错误表示有数据了，反序序列化数据
                 if (packet.response != null && replyHdr.getErr() == 0) {
                     packet.response.deserialize(bbia, "response");
                 }
@@ -894,6 +903,7 @@ public class ClientCnxn {
                         if (!pbb.hasRemaining()) {
                             sentCount++;
                             Packet p = outgoingQueue.removeFirst();
+                            //这里将请求包放入队列中，服务端有数据返回时需要从这个队列中取出对应的请求包使用,ping和授权请求不需要处理
                             if (p.header != null
                                     && p.header.getType() != OpCode.ping
                                     && p.header.getType() != OpCode.auth) {
@@ -1353,6 +1363,7 @@ public class ClientCnxn {
     {
         Packet packet = null;
         synchronized (outgoingQueue) {
+        	//请求头，设置其请求序号ID
             if (h.getType() != OpCode.ping && h.getType() != OpCode.auth) {
                 h.setXid(getXid());
             }

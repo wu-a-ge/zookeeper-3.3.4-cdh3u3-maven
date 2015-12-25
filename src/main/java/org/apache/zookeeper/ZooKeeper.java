@@ -975,7 +975,7 @@ public class ZooKeeper {
         }
 
         final String serverPath = prependChroot(clientPath);
-
+        
         RequestHeader h = new RequestHeader();
         h.setType(ZooDefs.OpCode.getData);
         GetDataRequest request = new GetDataRequest();
