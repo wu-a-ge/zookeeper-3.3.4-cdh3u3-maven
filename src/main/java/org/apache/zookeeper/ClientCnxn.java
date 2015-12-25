@@ -726,6 +726,7 @@ public class ClientCnxn {
             ConnectResponse conRsp = new ConnectResponse();
             conRsp.deserialize(bbia, "connect");
             negotiatedSessionTimeout = conRsp.getTimeOut();
+            //这里是服务端告诉客户端，你已经超时了，所以这里给一个过期的状态码
             if (negotiatedSessionTimeout <= 0) {
                 zooKeeper.state = States.CLOSED;
 
@@ -733,6 +734,7 @@ public class ClientCnxn {
                         Watcher.Event.EventType.None,
                         Watcher.Event.KeeperState.Expired, null));
                 eventThread.queueEventOfDeath();
+                //完全过期了，这里的ZK再去重连已经没有意义了，调用端必须关闭这个ZK，重新建一个才可以
                 throw new SessionExpiredException(
                         "Unable to reconnect to ZooKeeper service, session 0x"
                         + Long.toHexString(sessionId) + " has expired");
@@ -748,6 +750,7 @@ public class ClientCnxn {
                     + ", sessionid = 0x"
                     + Long.toHexString(sessionId)
                     + ", negotiated timeout = " + negotiatedSessionTimeout);
+            //连接成功，给一个已经连接的状态码
             eventThread.queueEvent(new WatchedEvent(Watcher.Event.EventType.None,
                     Watcher.Event.KeeperState.SyncConnected, null));
         }
@@ -784,6 +787,7 @@ public class ClientCnxn {
                 return;
             }
             //来自服务端的主动通知(数据改变，创建或删除节点)，在这里组装WatchedEvent,得到路径，状态和类型
+            //来自服务端的通知不可能有path为空的情况，也即也不会有状态码为断开和过期的情况，这些情况都是当前客户端放调用端发出的
             if (replyHdr.getXid() == -1) {
                 // -1 means notification
                 if (LOG.isDebugEnabled()) {
@@ -867,6 +871,7 @@ public class ClientCnxn {
             if (sockKey.isReadable()) {
                 int rc = sock.read(incomingBuffer);
                 if (rc < 0) {
+                	//这种情况貌似是服务端断开了连接，客户端只需要重试
                     throw new EndOfStreamException(
                             "Unable to read additional data from server sessionid 0x"
                             + Long.toHexString(sessionId)
@@ -1106,6 +1111,7 @@ public class ClientCnxn {
             long lastSend = now;
             while (zooKeeper.state.isAlive()) {
                 try {
+                	//if sockkey is null,disconnect,will re-establish
                     if (sockKey == null) {
                         // don't re-establish connection if we are closing
                         if (closing) {
@@ -1122,6 +1128,7 @@ public class ClientCnxn {
                         to = connectTimeout - idleRecv;
                     }
                     if (to <= 0) {
+                    	//这里超时，只是说有在会话过期的时间内内客户端没有收到服务端的心跳，还可以重连解决
                         throw new SessionTimeoutException(
                                 "Client session timed out, have not heard from server in "
                                 + idleRecv + "ms"
@@ -1206,6 +1213,7 @@ public class ClientCnxn {
                         }
                         cleanup();
                         if (zooKeeper.state.isAlive()) {
+                        	//有异常抛出，但是ZK状态没有CLOSED，给一个断开连接的状态
                             eventThread.queueEvent(new WatchedEvent(
                                     Event.EventType.None,
                                     Event.KeeperState.Disconnected,
