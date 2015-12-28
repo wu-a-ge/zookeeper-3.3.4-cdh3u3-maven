@@ -463,8 +463,8 @@ public class ClientCnxn {
             setUncaughtExceptionHandler(uncaughtExceptionHandler);
             setDaemon(true);
         }
-
         public void queueEvent(WatchedEvent event) {
+        	//如果是状态改变通知，必须保证状态改变了。
             if (event.getType() == EventType.None
                     && sessionState == event.getState()) {
                 return;
@@ -630,7 +630,7 @@ public class ClientCnxn {
     }
 
     private void finishPacket(Packet p) {
-    	//根据返回状态码来决定是否获取以及获取哪些观察者以备待会通知这些观察者
+    	//客户端发起请求时，获取响应后在指定的路径注册观察，服务端的下一次通知就从注册的观察里面筛选出来通知客户端
         if (p.watchRegistration != null) {
             p.watchRegistration.register(p.replyHeader.getErr());
         }
@@ -728,6 +728,7 @@ public class ClientCnxn {
             negotiatedSessionTimeout = conRsp.getTimeOut();
             //这里是服务端告诉客户端，你已经超时了，所以这里给一个过期的状态码
             if (negotiatedSessionTimeout <= 0) {
+            	//当前客户端的ZK状态直接进入了CLOSED状态，这个ZK会被关闭，客户端需要重新打开一个
                 zooKeeper.state = States.CLOSED;
 
                 eventThread.queueEvent(new WatchedEvent(
@@ -786,8 +787,7 @@ public class ClientCnxn {
                 }
                 return;
             }
-            //来自服务端的主动通知(数据改变，创建或删除节点)，在这里组装WatchedEvent,得到路径，状态和类型
-            //来自服务端的通知不可能有path为空的情况，也即也不会有状态码为断开和过期的情况，这些情况都是当前客户端放调用端发出的
+            //来自服务端的主动通知(数据改变，节点改变，状态改变等)，在这里组装WatchedEvent,得到路径，状态和类型
             if (replyHdr.getXid() == -1) {
                 // -1 means notification
                 if (LOG.isDebugEnabled()) {
@@ -1195,6 +1195,7 @@ public class ClientCnxn {
                         break;
                     } else {
                         // this is ugly, you have a better way speak up
+                    	//抛出这个异常已经无法重连了，直接退出当前ZK
                         if (e instanceof SessionExpiredException) {
                             LOG.info(e.getMessage() + ", closing socket connection");
                         } else if (e instanceof SessionTimeoutException) {
@@ -1381,6 +1382,7 @@ public class ClientCnxn {
             packet.ctx = ctx;
             packet.clientPath = clientPath;
             packet.serverPath = serverPath;
+            //如果调用端还在使用已经关闭或正在关闭的ZK客户端，这里会返回错误:SESSION EXPIRED
             if (!zooKeeper.state.isAlive() || closing) {
                 conLossPacket(packet);
             } else {
