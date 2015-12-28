@@ -787,7 +787,7 @@ public class ClientCnxn {
                 }
                 return;
             }
-            //来自服务端的主动通知(数据改变，节点改变，状态改变等)，在这里组装WatchedEvent,得到路径，状态和类型
+            //来自服务端的主动通知(数据改变，节点改变,状态改变除了授权外，其它都是通信问题，服务端不得在这里通知)，在这里组装WatchedEvent,得到路径，状态和类型
             if (replyHdr.getXid() == -1) {
                 // -1 means notification
                 if (LOG.isDebugEnabled()) {
