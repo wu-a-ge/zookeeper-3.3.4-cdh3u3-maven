@@ -464,13 +464,13 @@ public class ClientCnxn {
             setDaemon(true);
         }
         public void queueEvent(WatchedEvent event) {
-        	//Èç¹ûÊÇ×´Ì¬¸Ä±äÍ¨Öª£¬±ØĞë±£Ö¤×´Ì¬¸Ä±äÁË¡£
+        	//å¦‚æœæ˜¯çŠ¶æ€æ”¹å˜é€šçŸ¥ï¼Œå¿…é¡»ä¿è¯çŠ¶æ€æ”¹å˜äº†ã€‚
             if (event.getType() == EventType.None
                     && sessionState == event.getState()) {
                 return;
             }
             sessionState = event.getState();
-            //¸ù¾İµÃµ½µÄÊÂ¼şÍ¨Öª£¬´ÓWATCHERÖĞÑ¡³öĞèÒªµÃµ½Í¨ÖªµÄWATCHER
+            //æ ¹æ®å¾—åˆ°çš„äº‹ä»¶é€šçŸ¥ï¼Œä»WATCHERä¸­é€‰å‡ºéœ€è¦å¾—åˆ°é€šçŸ¥çš„WATCHER
             // materialize the watchers based on the event
             WatcherSetEventPair pair = new WatcherSetEventPair(
                     watcher.materialize(event.getState(), event.getType(),
@@ -534,7 +534,7 @@ public class ClientCnxn {
                       }
                   }
               } else {
-            	  //´¦Àí Òì²½»Øµ÷µÄÇëÇó°ü£¬Í¬²½²»Ó¦¸Ã½øÀ´
+            	  //å¤„ç† å¼‚æ­¥å›è°ƒçš„è¯·æ±‚åŒ…ï¼ŒåŒæ­¥ä¸åº”è¯¥è¿›æ¥
             	  Packet p = (Packet) event;
                   int rc = 0;
                   String clientPath = p.clientPath;
@@ -562,7 +562,7 @@ public class ClientCnxn {
                                               .getStat());
                           }
                       } else {
-                    	  //ÓĞ´íÎó £¬stat¾ÍÎªNULL
+                    	  //æœ‰é”™è¯¯ ï¼Œstatå°±ä¸ºNULL
                           cb.processResult(rc, clientPath, p.ctx, null);
                       }
                   } else if (p.response instanceof GetDataResponse) {
@@ -572,7 +572,7 @@ public class ClientCnxn {
                           cb.processResult(rc, clientPath, p.ctx, rsp
                                   .getData(), rsp.getStat());
                       } else {
-                    	//ÓĞ´íÎó £¬dataºÍstat¾ÍÎªNULL
+                    	//æœ‰é”™è¯¯ ï¼Œdataå’Œstatå°±ä¸ºNULL
                           cb.processResult(rc, clientPath, p.ctx, null,
                                   null);
                       }
@@ -593,7 +593,7 @@ public class ClientCnxn {
                           cb.processResult(rc, clientPath, p.ctx, rsp
                                   .getChildren());
                       } else {
-                    	//ÓĞ´íÎó £¬children¾ÍÎªNULL
+                    	//æœ‰é”™è¯¯ ï¼Œchildrenå°±ä¸ºNULL
                           cb.processResult(rc, clientPath, p.ctx, null);
                       }
                   } else if (p.response instanceof GetChildren2Response) {
@@ -615,7 +615,7 @@ public class ClientCnxn {
                                           : rsp.getPath()
                                     .substring(chrootPath.length())));
                       } else {
-                    	  //´íÎónameÎªNULL,»¹ÊÇÂ·¾¶Ãû
+                    	  //é”™è¯¯nameä¸ºNULL,è¿˜æ˜¯è·¯å¾„å
                           cb.processResult(rc, clientPath, p.ctx, null);
                       }
                   } else if (p.cb instanceof VoidCallback) {
@@ -630,11 +630,11 @@ public class ClientCnxn {
     }
 
     private void finishPacket(Packet p) {
-    	//¿Í»§¶Ë·¢ÆğÇëÇóÊ±£¬»ñÈ¡ÏìÓ¦ºóÔÚÖ¸¶¨µÄÂ·¾¶×¢²á¹Û²ì£¬·şÎñ¶ËµÄÏÂÒ»´ÎÍ¨Öª¾Í´Ó×¢²áµÄ¹Û²ìÀïÃæÉ¸Ñ¡³öÀ´Í¨Öª¿Í»§¶Ë
+    	//å®¢æˆ·ç«¯å‘èµ·è¯·æ±‚æ—¶ï¼Œè·å–å“åº”ååœ¨æŒ‡å®šçš„è·¯å¾„æ³¨å†Œè§‚å¯Ÿï¼ŒæœåŠ¡ç«¯çš„ä¸‹ä¸€æ¬¡é€šçŸ¥å°±ä»æ³¨å†Œçš„è§‚å¯Ÿé‡Œé¢ç­›é€‰å‡ºæ¥é€šçŸ¥å®¢æˆ·ç«¯
         if (p.watchRegistration != null) {
             p.watchRegistration.register(p.replyHeader.getErr());
         }
-        //»Øµ÷Îª¿Õ£¬±íÃ÷ÊÇÒ»¸öÍ¬²½µÄÍ¨Öª£¬ËùÒÔ¿ÉÒÔÍ¨Öªµ÷ÓÃ¶ËµÄ°ü¿ÉÒÔ»ñÈ¡½øĞĞºóĞø´¦ÀíÁË
+        //å›è°ƒä¸ºç©ºï¼Œè¡¨æ˜æ˜¯ä¸€ä¸ªåŒæ­¥çš„é€šçŸ¥ï¼Œæ‰€ä»¥å¯ä»¥é€šçŸ¥è°ƒç”¨ç«¯çš„åŒ…å¯ä»¥è·å–è¿›è¡Œåç»­å¤„ç†äº†
         if (p.cb == null) {
             synchronized (p) {
                 p.finished = true;
@@ -726,16 +726,16 @@ public class ClientCnxn {
             ConnectResponse conRsp = new ConnectResponse();
             conRsp.deserialize(bbia, "connect");
             negotiatedSessionTimeout = conRsp.getTimeOut();
-            //ÕâÀïÊÇ·şÎñ¶Ë¸æËß¿Í»§¶Ë£¬ÄãÒÑ¾­³¬Ê±ÁË£¬ËùÒÔÕâÀï¸øÒ»¸ö¹ıÆÚµÄ×´Ì¬Âë
+            //è¿™é‡Œæ˜¯æœåŠ¡ç«¯å‘Šè¯‰å®¢æˆ·ç«¯ï¼Œä½ å·²ç»è¶…æ—¶äº†ï¼Œæ‰€ä»¥è¿™é‡Œç»™ä¸€ä¸ªè¿‡æœŸçš„çŠ¶æ€ç 
             if (negotiatedSessionTimeout <= 0) {
-            	//µ±Ç°¿Í»§¶ËµÄZK×´Ì¬Ö±½Ó½øÈëÁËCLOSED×´Ì¬£¬Õâ¸öZK»á±»¹Ø±Õ£¬¿Í»§¶ËĞèÒªÖØĞÂ´ò¿ªÒ»¸ö
+            	//å½“å‰å®¢æˆ·ç«¯çš„ZKçŠ¶æ€ç›´æ¥è¿›å…¥äº†CLOSEDçŠ¶æ€ï¼Œè¿™ä¸ªZKä¼šè¢«å…³é—­ï¼Œå®¢æˆ·ç«¯éœ€è¦é‡æ–°æ‰“å¼€ä¸€ä¸ª
                 zooKeeper.state = States.CLOSED;
 
                 eventThread.queueEvent(new WatchedEvent(
                         Watcher.Event.EventType.None,
                         Watcher.Event.KeeperState.Expired, null));
                 eventThread.queueEventOfDeath();
-                //ÍêÈ«¹ıÆÚÁË£¬ÕâÀïµÄZKÔÙÈ¥ÖØÁ¬ÒÑ¾­Ã»ÓĞÒâÒåÁË£¬µ÷ÓÃ¶Ë±ØĞë¹Ø±ÕÕâ¸öZK£¬ÖØĞÂ½¨Ò»¸ö²Å¿ÉÒÔ
+                //å®Œå…¨è¿‡æœŸäº†ï¼Œè¿™é‡Œçš„ZKå†å»é‡è¿å·²ç»æ²¡æœ‰æ„ä¹‰äº†ï¼Œè°ƒç”¨ç«¯å¿…é¡»å…³é—­è¿™ä¸ªZKï¼Œé‡æ–°å»ºä¸€ä¸ªæ‰å¯ä»¥
                 throw new SessionExpiredException(
                         "Unable to reconnect to ZooKeeper service, session 0x"
                         + Long.toHexString(sessionId) + " has expired");
@@ -751,7 +751,7 @@ public class ClientCnxn {
                     + ", sessionid = 0x"
                     + Long.toHexString(sessionId)
                     + ", negotiated timeout = " + negotiatedSessionTimeout);
-            //Á¬½Ó³É¹¦£¬¸øÒ»¸öÒÑ¾­Á¬½ÓµÄ×´Ì¬Âë
+            //è¿æ¥æˆåŠŸï¼Œç»™ä¸€ä¸ªå·²ç»è¿æ¥çš„çŠ¶æ€ç 
             eventThread.queueEvent(new WatchedEvent(Watcher.Event.EventType.None,
                     Watcher.Event.KeeperState.SyncConnected, null));
         }
@@ -787,7 +787,7 @@ public class ClientCnxn {
                 }
                 return;
             }
-            //À´×Ô·şÎñ¶ËµÄÖ÷¶¯Í¨Öª(Êı¾İ¸Ä±ä£¬½Úµã¸Ä±ä,×´Ì¬¸Ä±ä³ıÁËÊÚÈ¨Íâ£¬ÆäËü¶¼ÊÇÍ¨ĞÅÎÊÌâ£¬·şÎñ¶Ë²»µÃÔÚÕâÀïÍ¨Öª)£¬ÔÚÕâÀï×é×°WatchedEvent,µÃµ½Â·¾¶£¬×´Ì¬ºÍÀàĞÍ
+            //æ¥è‡ªæœåŠ¡ç«¯çš„ä¸»åŠ¨é€šçŸ¥(æ•°æ®æ”¹å˜ï¼ŒèŠ‚ç‚¹æ”¹å˜,çŠ¶æ€æ”¹å˜é™¤äº†æˆæƒå¤–ï¼Œå…¶å®ƒéƒ½æ˜¯é€šä¿¡é—®é¢˜ï¼ŒæœåŠ¡ç«¯ä¸å¾—åœ¨è¿™é‡Œé€šçŸ¥)ï¼Œåœ¨è¿™é‡Œç»„è£…WatchedEvent,å¾—åˆ°è·¯å¾„ï¼ŒçŠ¶æ€å’Œç±»å‹
             if (replyHdr.getXid() == -1) {
                 // -1 means notification
                 if (LOG.isDebugEnabled()) {
@@ -819,7 +819,7 @@ public class ClientCnxn {
                 throw new IOException("Nothing in the queue, but got "
                         + replyHdr.getXid());
             }
-            //¿Í»§¶Ë·¢ÆğµÄÇëÇó£¬·şÎñ¶ËÓĞÊı¾İ·µ»Ø£¬´Ó¶ÓÁĞÖĞÈ¡³öÏàÓ¦µÄÇëÇó°üÀ´´¦Àí
+            //å®¢æˆ·ç«¯å‘èµ·çš„è¯·æ±‚ï¼ŒæœåŠ¡ç«¯æœ‰æ•°æ®è¿”å›ï¼Œä»é˜Ÿåˆ—ä¸­å–å‡ºç›¸åº”çš„è¯·æ±‚åŒ…æ¥å¤„ç†
             Packet packet = null;
             synchronized (pendingQueue) {
                 packet = pendingQueue.remove();
@@ -843,7 +843,7 @@ public class ClientCnxn {
                 if (replyHdr.getZxid() > 0) {
                     lastZxid = replyHdr.getZxid();
                 }
-                //Ã»ÓĞ´íÎó±íÊ¾ÓĞÊı¾İÁË£¬·´ĞòĞòÁĞ»¯Êı¾İ
+                //æ²¡æœ‰é”™è¯¯è¡¨ç¤ºæœ‰æ•°æ®äº†ï¼Œååºåºåˆ—åŒ–æ•°æ®
                 if (packet.response != null && replyHdr.getErr() == 0) {
                     packet.response.deserialize(bbia, "response");
                 }
@@ -871,7 +871,7 @@ public class ClientCnxn {
             if (sockKey.isReadable()) {
                 int rc = sock.read(incomingBuffer);
                 if (rc < 0) {
-                	//ÕâÖÖÇé¿öÃ²ËÆÊÇ·şÎñ¶Ë¶Ï¿ªÁËÁ¬½Ó£¬¿Í»§¶ËÖ»ĞèÒªÖØÊÔ
+                	//è¿™ç§æƒ…å†µè²Œä¼¼æ˜¯æœåŠ¡ç«¯æ–­å¼€äº†è¿æ¥ï¼Œå®¢æˆ·ç«¯åªéœ€è¦é‡è¯•
                     throw new EndOfStreamException(
                             "Unable to read additional data from server sessionid 0x"
                             + Long.toHexString(sessionId)
@@ -908,7 +908,7 @@ public class ClientCnxn {
                         if (!pbb.hasRemaining()) {
                             sentCount++;
                             Packet p = outgoingQueue.removeFirst();
-                            //ÕâÀï½«ÇëÇó°ü·ÅÈë¶ÓÁĞÖĞ£¬·şÎñ¶ËÓĞÊı¾İ·µ»ØÊ±ĞèÒª´ÓÕâ¸ö¶ÓÁĞÖĞÈ¡³ö¶ÔÓ¦µÄÇëÇó°üÊ¹ÓÃ,pingºÍÊÚÈ¨ÇëÇó²»ĞèÒª´¦Àí
+                            //è¿™é‡Œå°†è¯·æ±‚åŒ…æ”¾å…¥é˜Ÿåˆ—ä¸­ï¼ŒæœåŠ¡ç«¯æœ‰æ•°æ®è¿”å›æ—¶éœ€è¦ä»è¿™ä¸ªé˜Ÿåˆ—ä¸­å–å‡ºå¯¹åº”çš„è¯·æ±‚åŒ…ä½¿ç”¨,pingå’Œæˆæƒè¯·æ±‚ä¸éœ€è¦å¤„ç†
                             if (p.header != null
                                     && p.header.getType() != OpCode.ping
                                     && p.header.getType() != OpCode.auth) {
@@ -1128,7 +1128,7 @@ public class ClientCnxn {
                         to = connectTimeout - idleRecv;
                     }
                     if (to <= 0) {
-                    	//ÕâÀï³¬Ê±£¬Ö»ÊÇËµÓĞÔÚ»á»°¹ıÆÚµÄÊ±¼äÄÚÄÚ¿Í»§¶ËÃ»ÓĞÊÕµ½·şÎñ¶ËµÄĞÄÌø£¬»¹¿ÉÒÔÖØÁ¬½â¾ö
+                    	//è¿™é‡Œè¶…æ—¶ï¼Œåªæ˜¯è¯´æœ‰åœ¨ä¼šè¯è¿‡æœŸçš„æ—¶é—´å†…å†…å®¢æˆ·ç«¯æ²¡æœ‰æ”¶åˆ°æœåŠ¡ç«¯çš„å¿ƒè·³ï¼Œè¿˜å¯ä»¥é‡è¿è§£å†³
                         throw new SessionTimeoutException(
                                 "Client session timed out, have not heard from server in "
                                 + idleRecv + "ms"
@@ -1195,7 +1195,7 @@ public class ClientCnxn {
                         break;
                     } else {
                         // this is ugly, you have a better way speak up
-                    	//Å×³öÕâ¸öÒì³£ÒÑ¾­ÎŞ·¨ÖØÁ¬ÁË£¬Ö±½ÓÍË³öµ±Ç°ZK
+                    	//æŠ›å‡ºè¿™ä¸ªå¼‚å¸¸å·²ç»æ— æ³•é‡è¿äº†ï¼Œç›´æ¥é€€å‡ºå½“å‰ZK
                         if (e instanceof SessionExpiredException) {
                             LOG.info(e.getMessage() + ", closing socket connection");
                         } else if (e instanceof SessionTimeoutException) {
@@ -1214,7 +1214,7 @@ public class ClientCnxn {
                         }
                         cleanup();
                         if (zooKeeper.state.isAlive()) {
-                        	//ÓĞÒì³£Å×³ö£¬µ«ÊÇZK×´Ì¬Ã»ÓĞCLOSED£¬¸øÒ»¸ö¶Ï¿ªÁ¬½ÓµÄ×´Ì¬
+                        	//æœ‰å¼‚å¸¸æŠ›å‡ºï¼Œä½†æ˜¯ZKçŠ¶æ€æ²¡æœ‰CLOSEDï¼Œç»™ä¸€ä¸ªæ–­å¼€è¿æ¥çš„çŠ¶æ€
                             eventThread.queueEvent(new WatchedEvent(
                                     Event.EventType.None,
                                     Event.KeeperState.Disconnected,
@@ -1372,7 +1372,7 @@ public class ClientCnxn {
     {
         Packet packet = null;
         synchronized (outgoingQueue) {
-        	//ÇëÇóÍ·£¬ÉèÖÃÆäÇëÇóĞòºÅID
+        	//è¯·æ±‚å¤´ï¼Œè®¾ç½®å…¶è¯·æ±‚åºå·ID
             if (h.getType() != OpCode.ping && h.getType() != OpCode.auth) {
                 h.setXid(getXid());
             }
@@ -1382,7 +1382,7 @@ public class ClientCnxn {
             packet.ctx = ctx;
             packet.clientPath = clientPath;
             packet.serverPath = serverPath;
-            //Èç¹ûµ÷ÓÃ¶Ë»¹ÔÚÊ¹ÓÃÒÑ¾­¹Ø±Õ»òÕıÔÚ¹Ø±ÕµÄZK¿Í»§¶Ë£¬ÕâÀï»á·µ»Ø´íÎó:SESSION EXPIRED
+            //å¦‚æœè°ƒç”¨ç«¯è¿˜åœ¨ä½¿ç”¨å·²ç»å…³é—­æˆ–æ­£åœ¨å…³é—­çš„ZKå®¢æˆ·ç«¯ï¼Œè¿™é‡Œä¼šè¿”å›é”™è¯¯:SESSION EXPIRED
             if (!zooKeeper.state.isAlive() || closing) {
                 conLossPacket(packet);
             } else {
